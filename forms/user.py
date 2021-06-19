@@ -4,6 +4,7 @@ from wtforms.validators import DataRequired
 from wtforms.fields.html5 import EmailField
 
 
+# daadaddadada
 class LoginForm(FlaskForm):
     email = EmailField('Почта', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
