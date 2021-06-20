@@ -1,11 +1,9 @@
 @media (min-width: 768px) {
   .navbar-container {
-    position: relative;
+    position: sticky;
     top: 0;
     overflow-y: auto;
-    height: 200px;
-    font-size:24px;
-
+    height: 100vh;
   }
   .navbar-container .navbar {
     align-items: flex-start;
@@ -24,12 +22,4 @@
   .navbar-container .navbar-nav {
     flex-direction: column !important;
   }
-}
-main{
-    position:absolute;
-    left:30%;
-    top:100px;
-}
-header{
-    height:5%;
 }
