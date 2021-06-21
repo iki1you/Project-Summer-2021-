@@ -154,7 +154,6 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = RegisterForm()
@@ -206,26 +205,26 @@ def cookie_test():
                        max_age=60 * 60 * 24 * 365 * 2)
     return res
 
+
 @app.route("/profile")
-
 def profile():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    return redirect(f'/profile/{current_user.username}')
+
+
+@app.route('/profile/<string:username>')
+def profile_user(username):
     db_sess = db_session.create_session()
-    user = db_sess.query(User)
-    avatar = 'default'
-    if current_user.is_authenticated:
-        avatar = current_user.avatar_id
-        news = db_sess.query(News).filter(
-            (News.user == current_user) | (News.is_private != True))
+    user = db_sess.query(User).filter(User.username == username).first()
+    if user:
+        avatar = user.avatar_id
+        news = db_sess.query(News).filter((News.user == current_user) | (News.is_private != True))
+        name = user.name
+        return render_template('profile.html', title='Профиль',
+                               news=news, avatar=avatar, user=name)
     else:
-        news = db_sess.query(News).filter(News.is_private != True)
-
-    name = current_user.name
-
-
-
-    return render_template('profile.html', title='Профиль',
-                           news=news, avatar=avatar, user=name)
-
+        abort(404)
 
 
 if __name__ == '__main__':
