@@ -17,11 +17,7 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-import sys
-sys.path.insert(0, 'Путь к папке вашего проекта')
-from data.db_session import SqlAlchemyBase
-import data.__all_models
-target_metadata = SqlAlchemyBase.metadata
+target_metadata = None
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
