@@ -4,15 +4,19 @@
 <link rel="stylesheet" href="../static/css/profile.css">
 <h1>Профиль</h1>
 <div class="avatar">
-    <img src="../static/img/None.jpg" class="avatar_img" width="90%">
+    <img src="{{url_for('static', filename='img/')}}{{ avatar }}.jpg" width="90%" class="avatar_img">
 </div>
 <div class="info">
-    <div class="name"><h2>{{user}}</h2></div>
+    <div class="name"><h2>{{name}} {{surname}}</h2></div>
+    <div class="about">
+        <h4>Город:&nbsp;&nbsp;&nbsp; {{city}}</h4>
+    </div>
 
 </div>
-<div class="main"><a href="news" class="btn btn-secondary">Добавить новость</a>
+<div class="main">
+    <div class="add_news"><a href="news" class="btn btn-secondary">Добавить новость</a></div>
 
-    {% for item in news%}
+    <div class="news">{% for item in news%}
         {% if current_user.is_authenticated and current_user.name == item.user.name %}
         <div class="col-md6 border rounded">
             <h2>{{item.title}}</h2>
@@ -26,15 +30,17 @@
         {% endif %}
         {% if current_user.is_authenticated and current_user.name == item.user.name %}
         <div>
-            <a href="/news/{{ item.id }}" class="btn btn-warning">
+            <a href="/news/{{ item.id }}" class="btn btn-light">
                 Изменить
             </a>
-            <a href="/news_delete/{{ item.id }}" class="btn btn-danger">
+            <a href="/news_delete/{{ item.id }}" class="btn btn-dark">
                 Удалить
             </a>
         </div>
         {% endif %}
         {% endfor %}
+    </div>
+
 
 </div>
 

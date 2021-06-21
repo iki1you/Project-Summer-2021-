@@ -13,7 +13,7 @@
     <nav class="navbar navbar-light bg-primary">
         <a class="navbar-brand" href="/index" style="font-size:24px; color:white; word-spacing: 5px; margin-left:1%;">MiKi</a>
         {% if current_user.is_authenticated %}
-            <p style="color:white; font-size:24px;">Вы зашли под псевдонимом {{ current_user.name }}</p>
+
             <a class="navbar-brand" href="/logout">Выход</a>
         {% else %}
             <p>
@@ -35,10 +35,10 @@
             <!-- Пункты вертикального меню -->
             <ul class="navbar-nav">
               <li class="nav-item">
-              <a class="nav-link" href="/profile">Профиль</a>
+              <a class="nav-link" href="/profile/{{current_user.username}}">Профиль</a>
               </li>
               <li class="nav-item">
-              <a class="nav-link" href="#link-2">Диалоги</a>
+              <a class="nav-link" href="/index">Новости</a>
               </li>
             </ul>
           </div>
