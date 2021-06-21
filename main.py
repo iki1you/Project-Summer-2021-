@@ -19,8 +19,6 @@ def load_user(user_id):
     return db_sess.query(User).get(user_id)
 
 
-
-
 def main():
     db_session.global_init("db/blogs.db")
     app.run()
@@ -30,15 +28,17 @@ def main():
 @app.route('/index')
 def index():
     db_sess = db_session.create_session()
-    news = db_sess.query(News)
+    user = db_sess.query(User)
+    avatar = 'default'
     if current_user.is_authenticated:
+        avatar = current_user.avatar_id
         news = db_sess.query(News).filter(
             (News.user == current_user) | (News.is_private != True))
     else:
         news = db_sess.query(News).filter(News.is_private != True)
 
     return render_template('index.html', title='Домашняя страница',
-                           news=news)
+                           news=news, avatar=avatar)
 
 
 @app.route('/logout')
