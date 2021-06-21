@@ -7,7 +7,10 @@
     <img src="{{url_for('static', filename='img/')}}{{ avatar }}.jpg" width="90%" class="avatar_img">
 </div>
 <div class="info">
-    <div class="name"><h2>{{user}}</h2></div>
+    <div class="name"><h2>{{name}} {{surname}}</h2></div>
+    <div class="about">
+        <h4>Город:&nbsp;&nbsp;&nbsp; {{city}}</h4>
+    </div>
 
 </div>
 <div class="main">
