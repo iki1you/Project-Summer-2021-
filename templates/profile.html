@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <p>ky</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="../static/css/profile.css">
+<h1>Профиль</h1>
+<div class="avatar">
+    <img src="../static/img/None.jpg" class="avatar_img" width="90%">
+</div>
+<div class="info">
+    <div class="name"><h2>{{user}}</h2></div>
+
+</div>
+<div class="main"><a href="news" class="btn btn-secondary">Добавить новость</a>
+
+    {% for item in news%}
+        {% if current_user.is_authenticated and current_user.name == item.user.name %}
+        <div class="col-md6 border rounded">
+            <h2>{{item.title}}</h2>
+            <div>
+                {{item.content}}
+            </div>
+            <div>
+                Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+            </div>
+        </div>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.name == item.user.name %}
+        <div>
+            <a href="/news/{{ item.id }}" class="btn btn-warning">
+                Изменить
+            </a>
+            <a href="/news_delete/{{ item.id }}" class="btn btn-danger">
+                Удалить
+            </a>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+</div>
+
+{% endblock %}

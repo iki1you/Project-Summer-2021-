@@ -203,14 +203,25 @@ def cookie_test():
                        max_age=60 * 60 * 24 * 365 * 2)
     return res
 
-@app.route("/profile/<string:username>")
+@app.route("/profile")
 
 def profile():
+    db_sess = db_session.create_session()
+    user = db_sess.query(User)
+    avatar = 'default'
     if current_user.is_authenticated:
-        return render_template('/profile')
-
+        avatar = current_user.avatar_id
+        news = db_sess.query(News).filter(
+            (News.user == current_user) | (News.is_private != True))
     else:
-        return render_template('/login')
+        news = db_sess.query(News).filter(News.is_private != True)
+
+    name = current_user.name
+
+
+
+    return render_template('profile.html', title='Профиль',
+                           news=news, avatar=avatar, user=name)
 
 
 

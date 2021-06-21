@@ -1,4 +1,4 @@
-@media (min-width: 768px) {
+@media (min-width: 200px) {
   .navbar-container {
     position: relative;
     top: 0;
@@ -10,7 +10,6 @@
   .navbar-container .navbar {
     align-items: flex-start;
     justify-content: flex-start;
-    flex-wrap: nowrap;
     flex-direction: column;
     height: 100%;
   }
@@ -32,4 +31,9 @@ main{
 }
 header{
     height:5%;
+}
+.profile{
+    background:black;
+    height:100px;
+    width:100px;
 }
