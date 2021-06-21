@@ -203,6 +203,15 @@ def cookie_test():
                        max_age=60 * 60 * 24 * 365 * 2)
     return res
 
+@app.route("/profile/<string:username>")
+
+def profile():
+    if current_user.is_authenticated:
+        return render_template('/profile')
+
+    else:
+        return render_template('/login')
+
 
 
 if __name__ == '__main__':
