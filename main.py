@@ -1,4 +1,7 @@
+import os
+
 from flask import Flask, url_for, request, render_template, json, redirect, make_response, session, abort
+from werkzeug.utils import secure_filename
 from data import db_session
 from data.news import News
 from forms.news import NewsForm
@@ -8,9 +11,32 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+app.config["IMAGE_UPLOADS"] = 'static/uploaded_images'
+app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPEG", "JPG", "PNG", "GIF"]
+app.config["MAX_IMAGE_FILESIZE"] = 3 * 1024 * 1024
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+
+def allowed_image(filename):  # Проверка разрешения файла
+
+    if not "." in filename:
+        return False
+
+    ext = filename.rsplit(".", 1)[1]
+
+    if ext.upper() in app.config["ALLOWED_IMAGE_EXTENSIONS"]:
+        return True
+    else:
+        return False
+
+
+def allowed_image_filesize(filesize):  # Проверка размера файла
+    if int(filesize) <= app.config["MAX_IMAGE_FILESIZE"]:
+        return True
+    else:
+        return False
 
 
 @login_manager.user_loader
@@ -59,7 +85,7 @@ def odd_even():
     return render_template('odd_even.html', number=3)
 
 
-@app.route('/news',  methods=['GET', 'POST'])
+@app.route('/news', methods=['GET', 'POST'])
 @login_required
 def add_news():
     form = NewsForm()
@@ -213,7 +239,7 @@ def profile():
     return redirect(f'/profile/{current_user.username}')
 
 
-@app.route('/profile/<string:username>')
+@app.route('/profile/<string:username>', methods=['GET', 'POST'])
 def profile_user(username):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.username == username).first()
@@ -221,13 +247,43 @@ def profile_user(username):
         avatar = user.avatar_id
         news = db_sess.query(News).filter((News.user == current_user) | (News.is_private != True))
         name = user.name
+        city = user.city
+        surname = user.surname
+
+        if user == current_user:    # не забыть выводить ошибку пользователю
+            if request.method == "POST":
+                if request.files:
+                    if "filesize" in request.cookies:
+                        if not allowed_image_filesize(request.cookies["filesize"]):
+                            print("Filesize exceeded maximum limit")
+                            return redirect(request.url)
+
+                        image = request.files["image"]
+                        if image.filename == "":
+                            print("No filename")
+                            return redirect(request.url)
+
+                        if allowed_image(image.filename):
+                            filename = secure_filename(image.filename)
+
+                            image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
+
+                            user.avatar_id = filename
+                            db_sess.commit()
+
+                            print("Image saved")
+
+                            return redirect(request.url)
+
+                        else:
+                            print("That file extension is not allowed")
+                            return redirect(request.url)
+
         return render_template('profile.html', title='Профиль',
-                               news=news, avatar=avatar, user=name)
+                               news=news, avatar=avatar, user=name, city=city, surname=surname, name=name)
     else:
         abort(404)
 
 
 if __name__ == '__main__':
     main()
-
-

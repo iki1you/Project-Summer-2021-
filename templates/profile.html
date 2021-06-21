@@ -3,8 +3,31 @@
 {% block content %}
 <link rel="stylesheet" href="../static/css/profile.css">
 <h1>Профиль</h1>
+<script>
+  function filesize(elem){
+    document.cookie = `filesize=${elem.files[0].size}`
+  }
+</script>
+
 <div class="avatar">
-    <img src="{{url_for('static', filename='img/')}}{{ avatar }}.jpg" width="90%" class="avatar_img">
+    <img src="{{url_for('static', filename='uploaded_images/')}}{{ avatar }}" width="90%" class="avatar_img">
+     <div class="container">
+  <div class="row">
+    <div class="col">
+      <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Select image</label>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" name="image" id="image" oninput="filesize(this);">
+            <label class="custom-file-label" for="image">Select image...</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+      </form>
+
+    </div>
+  </div>
+</div>
 </div>
 <div class="info">
     <div class="name"><h2>{{name}} {{surname}}</h2></div>
@@ -14,7 +37,7 @@
 
 </div>
 <div class="main">
-    <div class="add_news"><a href="news" class="btn btn-secondary">Добавить новость</a></div>
+    <div class="add_news"><a href="../news" class="btn btn-secondary">Добавить новость</a></div>
 
     <div class="news">{% for item in news%}
         {% if current_user.is_authenticated and current_user.name == item.user.name %}
