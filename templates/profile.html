@@ -10,7 +10,7 @@
 </script>
 
 <div class="avatar">
-    <img src="{{url_for('static', filename='uploaded_images/')}}{{ avatar }}" width="90%" class="avatar_img">
+    <img src="{{url_for('static', filename='uploaded_images/')}}{{ user.avatar_id }}" width="90%" class="avatar_img">
      <div class="container">
   <div class="row">
     <div class="col">
@@ -30,17 +30,19 @@
 </div>
 </div>
 <div class="info">
-    <div class="name"><h2>{{name}} {{surname}}</h2></div>
+    <div class="name"><h2>{{user.name}} {{user.surname}}</h2></div>
     <div class="about">
-        <h4>Город:&nbsp;&nbsp;&nbsp; {{city}}</h4>
+        <h4>Город:&nbsp;&nbsp;&nbsp; {{user.city}}</h4>
     </div>
 
 </div>
 <div class="main">
+    {% if current_user.is_authenticated and current_user.id == user.id %}
     <div class="add_news"><a href="../news" class="btn btn-secondary">Добавить новость</a></div>
+    {% endif %}
 
     <div class="news">{% for item in news%}
-        {% if current_user.is_authenticated and current_user.name == item.user.name %}
+        {% if current_user.is_authenticated and user.id == item.user_id%}
         <div class="col-md6 border rounded">
             <h2>{{item.title}}</h2>
             <div>
@@ -51,7 +53,7 @@
             </div>
         </div>
         {% endif %}
-        {% if current_user.is_authenticated and current_user.name == item.user.name %}
+        {% if current_user.is_authenticated and current_user.id == item.user_id %}
         <div>
             <a href="/news/{{ item.id }}" class="btn btn-light">
                 Изменить

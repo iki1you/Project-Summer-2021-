@@ -193,13 +193,18 @@ def reqister():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
+        if db_sess.query(User).filter(User.username == form.username.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Такой пользователь уже есть")
         user = User(
             name=form.name.data,
             email=form.email.data,
             about=form.about.data,
             username=form.username.data,
             surname=form.surname.data,
-            city=form.city.data
+            city=form.city.data,
+            avatar_id='NONE.jpg'
         )
         user.set_password(form.password.data)
         db_sess.add(user)
@@ -244,11 +249,11 @@ def profile_user(username):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.username == username).first()
     if user:
-        avatar = user.avatar_id
-        news = db_sess.query(News).filter((News.user == current_user) | (News.is_private != True))
-        name = user.name
-        city = user.city
-        surname = user.surname
+
+        if current_user.is_authenticated:
+            news = db_sess.query(News).filter((News.user == current_user) | (News.is_private != True))
+        else:
+            news = db_sess.query(News).filter(News.is_private != True)
 
         if user == current_user:    # не забыть выводить ошибку пользователю
             if request.method == "POST":
@@ -280,7 +285,7 @@ def profile_user(username):
                             return redirect(request.url)
 
         return render_template('profile.html', title='Профиль',
-                               news=news, avatar=avatar, user=name, city=city, surname=surname, name=name)
+                               news=news, user=user)
     else:
         abort(404)
 
