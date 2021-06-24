@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from data import db_session
 from data.news import News
 from forms.news import NewsForm
-from forms.user import LoginForm, RegisterForm
+from forms.user import LoginForm, RegisterForm, EditForm
 from data.users import User
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
@@ -255,44 +255,51 @@ def profile_user(username):
         else:
             news = db_sess.query(News).filter(News.is_private != True)
 
-        if user == current_user:    # не забыть выводить ошибку пользователю
-            if request.method == "POST":
-                if request.files:
-                    if "filesize" in request.cookies:
-                        if not allowed_image_filesize(request.cookies["filesize"]):
-                            print("Filesize exceeded maximum limit")
-                            return redirect(request.url)
-
-                        image = request.files["image"]
-                        if image.filename == "":
-                            print("No filename")
-                            return redirect(request.url)
-
-                        if allowed_image(image.filename):
-                            filename = secure_filename(image.filename)
-
-                            image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-
-                            user.avatar_id = filename
-                            db_sess.commit()
-
-                            print("Image saved")
-
-                            return redirect(request.url)
-
-                        else:
-                            print("That file extension is not allowed")
-                            return redirect(request.url)
-
         return render_template('profile.html', title='Профиль',
                                news=news, user=user)
     else:
         abort(404)
 
 
+@login_required
 @app.route('/edit/<string:username>', methods=['GET', 'POST'])
 def edit(username):
-    return render_template('edit.html')
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.username == username).first()
+    form = EditForm()
+
+    if user == current_user:  # не забыть выводить ошибку пользователю
+        if request.method == "POST":
+            if request.files:
+                if "filesize" in request.cookies:
+                    if not allowed_image_filesize(request.cookies["filesize"]):
+                        print("Filesize exceeded maximum limit")
+                        return redirect(request.url)
+
+                    image = request.files["image"]
+                    if image.filename == "":
+                        print("No filename")
+                        return redirect(request.url)
+
+                    if allowed_image(image.filename):
+                        filename = secure_filename(image.filename)
+
+                        image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
+
+                        user.avatar_id = filename
+                        db_sess.commit()
+
+                        print("Image saved")
+
+                        return redirect(request.url)
+
+                    else:
+                        print("That file extension is not allowed")
+                        return redirect(request.url)
+    else:
+        return redirect(f'/profile/{username}')
+
+    return render_template('edit.html', user=user)
 
 
 if __name__ == '__main__':

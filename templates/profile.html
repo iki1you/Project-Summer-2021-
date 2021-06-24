@@ -10,6 +10,7 @@
 </script>
 
 <div class="avatar">
+
     <img src="{{url_for('static', filename='uploaded_images/')}}{{ user.avatar_id }}" width="90%" class="avatar_img">
          <div class="edit_avatar">
              <a href="/edit/{{user.username}}" class="btn btn-secondary">Редактировать</a>
@@ -22,6 +23,10 @@
     </div>
 
 </div>
+
+<div class="friends">
+</div>
+
 <div class="main">
     {% if current_user.is_authenticated and current_user.id == user.id %}
     <div class="add_news"><a href="../news" class="btn btn-secondary">Добавить новость</a></div>

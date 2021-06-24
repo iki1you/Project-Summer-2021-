@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+
 <h1>Регистрация</h1>
 <form action="" method="post"">
     {{ form.hidden_tag() }}
@@ -69,6 +71,21 @@
             </p>
         {% endfor %}
     </p>
+
+
+    <div class="container">
+    <div class="row">
+
+    <div class="col-md-6 col-md-offset-3">
+
+    <div class="calendar"></div>
+
+    </div>
+
+    </div>
+    </div>
+
+
     <p>
         {{ form.about.label }}<br>
         {{ form.about(class="form-control") }}<br>
