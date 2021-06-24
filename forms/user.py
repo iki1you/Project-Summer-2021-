@@ -30,3 +30,4 @@ class EditForm(FlaskForm):
     surname = StringField('Фамилия пользователя', validators=[DataRequired()])
     city = StringField('Город', validators=[DataRequired()])
     about = TextAreaField("Немного о себе")
+    submit = SubmitField('Сохранить')

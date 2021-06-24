@@ -262,11 +262,10 @@ def profile_user(username):
 
 
 @login_required
-@app.route('/edit/<string:username>', methods=['GET', 'POST'])
-def edit(username):
+@app.route('/edit_avatar/<string:username>', methods=['GET', 'POST'])
+def edit_avatar(username):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.username == username).first()
-    form = EditForm()
 
     if user == current_user:  # не забыть выводить ошибку пользователю
         if request.method == "POST":
@@ -300,6 +299,53 @@ def edit(username):
         return redirect(f'/profile/{username}')
 
     return render_template('edit.html', user=user)
+
+
+@login_required
+@app.route('/edit_info/<string:username>', methods=['GET', 'POST'])
+def edit_info(username):
+    db_sess = db_session.create_session()
+    user_ = db_sess.query(User).filter(User.username == username).first()
+    form = EditForm()
+
+    if user_ == current_user:
+        if request.method == "GET":
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.username == username
+                                              ).first()
+            if user:
+                form.name.data = user.name
+                form.surname.data = user.surname
+                form.about.data = user.about
+                form.city.data = user.city
+
+            else:
+                abort(404)
+
+        if form.validate_on_submit():
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(
+                                              User.surname == current_user
+                                              ).first()
+            if user:
+                user.name = form.name.data
+                user.surname = form.surname.data
+                user.city = form.city.data
+                user.about = form.about.data
+                db_sess.commit()
+                return redirect('profile.html')
+            else:
+                abort(404)
+
+
+
+
+
+
+    else:
+        return redirect(f'/profile/{username}')
+
+    return render_template('edit_info.html', form=form)
 
 
 if __name__ == '__main__':

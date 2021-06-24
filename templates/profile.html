@@ -13,14 +13,19 @@
 
     <img src="{{url_for('static', filename='uploaded_images/')}}{{ user.avatar_id }}" width="90%" class="avatar_img">
          <div class="edit_avatar">
-             <a href="/edit/{{user.username}}" class="btn btn-secondary">Редактировать</a>
+             <a href="/edit_avatar/{{user.username}}" class="btn btn-secondary">Изменить аватар</a>
          </div>
 </div>
 <div class="info">
     <div class="name"><h2>{{user.name}} {{user.surname}}</h2></div>
     <div class="about">
         <h4>Город:&nbsp;&nbsp;&nbsp; {{user.city}}</h4>
+        <h5>{{user.about}}</h5>
     </div>
+    <div class="edit_info">
+        <a href="/edit_info/{{user.username}}" class="btn btn-secondary">Редактировать информацию</a>
+    </div>
+
 
 </div>
 
