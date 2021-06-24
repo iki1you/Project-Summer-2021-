@@ -11,23 +11,9 @@
 
 <div class="avatar">
     <img src="{{url_for('static', filename='uploaded_images/')}}{{ user.avatar_id }}" width="90%" class="avatar_img">
-     <div class="container">
-  <div class="row">
-    <div class="col">
-      <form method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-          <label>Select image</label>
-          <div class="custom-file">
-            <input type="file" class="custom-file-input" name="image" id="image" oninput="filesize(this);">
-            <label class="custom-file-label" for="image">Select image...</label>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Upload</button>
-      </form>
-
-    </div>
-  </div>
-</div>
+         <div class="edit_avatar">
+             <a href="/edit/{{user.username}}" class="btn btn-secondary">Редактировать</a>
+         </div>
 </div>
 <div class="info">
     <div class="name"><h2>{{user.name}} {{user.surname}}</h2></div>
@@ -53,7 +39,7 @@
             </div>
         </div>
         {% endif %}
-        {% if current_user.is_authenticated and current_user.id == item.user_id %}
+        {% if current_user.is_authenticated and current_user.id == item.user_id and user.id == item.user_id %}
         <div>
             <a href="/news/{{ item.id }}" class="btn btn-light">
                 Изменить

@@ -290,5 +290,10 @@ def profile_user(username):
         abort(404)
 
 
+@app.route('/edit/<string:username>', methods=['GET', 'POST'])
+def edit(username):
+    return render_template('edit.html')
+
+
 if __name__ == '__main__':
     main()
