@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="main">
+    <div class="news">{% for user in users%}
+        <div class="col-md6 border rounded">
+            <img src="{{url_for('static', filename='uploaded_images/')}}{{ user.avatar_id }}" width="90%" class="avatar_img">
+            {{ user.username }}
+        </div>
+        <div>
+            здесь будут две кнопки "отклонить" и "принять"
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -7,7 +7,9 @@ from data.news import News
 from forms.news import NewsForm
 from forms.user import LoginForm, RegisterForm, EditForm
 from data.users import User
+from data.friends import Friends
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from forms.friend import FriendAddForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -338,14 +340,59 @@ def edit_info(username):
                 abort(404)
 
 
-
-
-
-
     else:
         return redirect(f'/profile/{username}')
 
     return render_template('edit_info.html', form=form)
+
+
+@login_required
+@app.route('/friend_add', methods=['GET', 'POST'])
+def friend_add():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+
+    db_sess = db_session.create_session()
+    form = FriendAddForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        user = db_sess.query(User).filter(User.username == username).first()
+
+        if not user:
+            return render_template('friend_add.html', message='Такого пользователя не существует', form=form)
+
+        if user == current_user:
+            return render_template('friend_add.html', message='Неверный никнейм', form=form)
+
+        if db_sess.query(Friends).filter(Friends.friend_two == user.id).first():
+            return render_template('friend_add.html', message='Вы уже отправляли заявку пользователю', form=form)
+
+        friend = Friends(
+            friend_one=current_user.id,
+            friend_two=user.id,
+            status=1
+        )
+
+        db_sess.add(friend)
+        db_sess.commit()
+
+        return render_template('friend_add.html', message='Запрос дрбавлен', form=form)
+
+    return render_template('friend_add.html', form=form)
+
+
+@login_required
+@app.route('/friend_accept', methods=['GET', 'POST'])
+def friend_accept():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+
+    db_sess = db_session.create_session()
+    friends = db_sess.query(Friends).filter((Friends.friend_two == current_user.id) & (Friends.status == 1)).all()
+    users = [db_sess.query(User).filter(User.id == i.friend_one).first() for i in friends]
+
+    return render_template('friend_accept.html', users=users)
+
 
 
 if __name__ == '__main__':
