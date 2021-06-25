@@ -257,6 +257,7 @@ def profile_user(username):
         else:
             news = db_sess.query(News).filter(News.is_private != True)
 
+
         return render_template('profile.html', title='Профиль',
                                news=news, user=user)
     else:
@@ -327,7 +328,7 @@ def edit_info(username):
         if form.validate_on_submit():
             db_sess = db_session.create_session()
             user = db_sess.query(User).filter(
-                                              User.surname == current_user
+                                              User.username == current_user.username
                                               ).first()
             if user:
                 user.name = form.name.data
@@ -335,7 +336,7 @@ def edit_info(username):
                 user.city = form.city.data
                 user.about = form.about.data
                 db_sess.commit()
-                return redirect('profile.html')
+                return redirect(f'/profile/{username}')
             else:
                 abort(404)
 

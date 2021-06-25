@@ -13,7 +13,10 @@
 
     <img src="{{url_for('static', filename='uploaded_images/')}}{{ user.avatar_id }}" width="90%" class="avatar_img">
          <div class="edit_avatar">
-             <a href="/edit_avatar/{{user.username}}" class="btn btn-secondary">Изменить аватар</a>
+             {% if current_user.is_authenticated and current_user.id == user.id %}
+   <a href="/edit_avatar/{{user.username}}" class="btn btn-secondary">Изменить аватар</a>
+    {% endif %}
+
          </div>
 </div>
 <div class="info">
@@ -23,7 +26,9 @@
         <h5>{{user.about}}</h5>
     </div>
     <div class="edit_info">
+        {% if current_user.is_authenticated and current_user.id == user.id %}
         <a href="/edit_info/{{user.username}}" class="btn btn-secondary">Редактировать информацию</a>
+        {% endif %}
     </div>
 
 
