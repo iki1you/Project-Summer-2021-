@@ -9,7 +9,12 @@
             {{ user.username }}
         </div>
         <div>
-            здесь будут две кнопки "отклонить" и "принять"
+            <a href="/friend_accepted/{{ user.id }}" class="btn btn-light">
+                Изменить
+            </a>
+            <a href="/friend_accepted/{{ user.id }}" class="btn btn-dark">
+                Отклонить
+            </a>
         </div>
     </div>
     {% endfor %}
