@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script>
+  function filesize(elem){
+    document.cookie = `filesize=${elem.files[0].size}`
+  }
+</script>
 <h1>Записи в блоге</h1>
 {% if current_user.is_authenticated %}
     <a href="news" class="btn btn-secondary">Добавить новость</a>
@@ -9,15 +14,26 @@
 
 
 {% for item in news%}
-    <div class="col-md6 border rounded">
-        <h2>{{item.title}}</h2>
+    <div class="col-md6 block">
+        <div style="padding:15px;">
+            <div class="user_info">
+            <a href="/profile/{{item.user.username}}"> <img src="{{url_for('static', filename='uploaded_images/')}}{{ item.user.avatar_id }}"
+                                                                    width="50px" height="50px" class="avatar_img round"></a>
+            <h2>{{item.user.name}} {{item.user.surname}}</h2>
+        </div>
+        <div class="post">
+            <div>
+            <h3>{{item.title}}</h3>
+        </div>
         <div>
             {{item.content}}
         </div>
         <div>
-            Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+             Дата написания - {{item.created_date}}
+        </div> </div>
+
         </div>
-    </div>
+
     {% if current_user.is_authenticated and current_user == item.user %}
     <div>
         <a href="/news/{{ item.id }}" class="btn btn-light">

@@ -37,3 +37,16 @@ header{
     height:100px;
     width:100px;
 }
+.block{
+    background:#F5F5F5;
+    margin-top:30px;
+}
+.user_info h2{
+    margin-top:-50px;
+    margin-left:75px;
+}
+.round {
+    border-radius: 100px; /* Радиус скругления */
+    border: 3px solid #F5F5F5; /* Параметры рамки */
+    box-shadow: 0 0 7px #666; /* Параметры тени */
+   }

@@ -66,7 +66,7 @@ def index():
         news = db_sess.query(News).filter(News.is_private != True)
 
     return render_template('index.html', title='Домашняя страница',
-                           news=news, avatar=avatar)
+                           news=news, avatar=avatar, user=user)
 
 
 @app.route('/logout')
@@ -393,6 +393,16 @@ def friend_accept():
     users = [db_sess.query(User).filter(User.id == i.friend_one).first() for i in friends]
 
     return render_template('friend_accept.html', users=users)
+
+
+@login_required
+@app.route('/friends', methods=['GET', 'POST'])
+def friends():
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.username == current_user.username).first()
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    return render_template('friends.html', user=user)
 
 
 
