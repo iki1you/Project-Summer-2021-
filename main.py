@@ -377,7 +377,7 @@ def friend_add():
         db_sess.add(friend)
         db_sess.commit()
 
-        return render_template('friend_add.html', message='Запрос дрбавлен', form=form)
+        return render_template('friend_add.html', message='Запрос добавлен', form=form)
 
     return render_template('friend_add.html', form=form)
 
@@ -390,10 +390,64 @@ def friend_accept():
 
     db_sess = db_session.create_session()
     friends = db_sess.query(Friends).filter((Friends.friend_two == current_user.id) & (Friends.status == 1)).all()
-    users = [db_sess.query(User).filter(User.id == i.friend_one).first() for i in friends]
+    users = []
 
-    return render_template('friend_accept.html', users=users)
+    for i in friends:
+        if db_sess.query(Friends).filter((Friends.friend_one == current_user.id) & (Friends.status != 0)).first():
+            continue
+        users.append(db_sess.query(User).filter(User.id == i.friend_one).first())
 
+    return render_template('friend_accept.html', users=users, sess=db_sess)
+
+
+@login_required
+@app.route('/friend_accepted/<int:id>', methods=['GET', 'POST'])
+def friend_accepted(id):
+    db_sess = db_session.create_session()
+
+    friend = Friends(
+        friend_one=current_user.id,
+        friend_two=id,
+        status=1
+    )
+
+    db_sess.add(friend)
+    db_sess.commit()
+    return redirect('/friend_accept')
+
+
+@login_required
+@app.route('/friend_rejected/<int:id>', methods=['GET', 'POST'])
+def friend_rejected(id):
+    db_sess = db_session.create_session()
+
+    friend = Friends(
+        friend_one=current_user.id,
+        friend_two=id,
+        status=-1
+    )
+
+    db_sess.add(friend)
+    db_sess.commit()
+    return redirect('/friend_accept')
+
+
+@login_required
+@app.route('/friends', methods=['GET', 'POST'])
+def friends():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+
+    db_sess = db_session.create_session()
+    friends = db_sess.query(Friends).filter((Friends.friend_two == current_user.id) & (Friends.status == 1)).all()
+    users = []
+
+    for i in friends:
+        if db_sess.query(Friends).filter((Friends.friend_one == current_user.id) & (Friends.status != 1)).first():
+            continue
+        users.append(db_sess.query(User).filter(User.id == i.friend_one).first())
+
+    return render_template('friends.html', users=users, sess=db_sess)
 
 
 if __name__ == '__main__':
