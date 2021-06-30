@@ -1,13 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<link rel="stylesheet" href="../static/css/friends.css">
 <div class="main">
-    <div class="news">
+    <div>
+        <a href="/friends" class="btn btn-primary">Все друзья</a>
+        <a href="/friend_add" class="btn btn-success">Найти друзей</a>
+        <a href="/friend_accept" class="btn btn-dark">Заявки в друзья</a>
+    </div>
+    <br>
+    <br>
+    <div class="friends">
         {% for user in users%}
-        <div class="col-md6 border rounded">
-            <img src="{{url_for('static', filename='uploaded_images/')}}{{ user.avatar_id }}" width="90%" class="avatar_img">
-            {{ user.username }}
+        <div class="col-md6">
+            <a href="/profile/{{user.username}}"><img src="{{url_for('static', filename='uploaded_images/')}}{{ user.avatar_id }}" width="6%" class="avatar_img round"></a>
+            <div class="user" style="margin-top:-5%; margin-left:7%;">
+                <h3>{{ user.name }}
+            {{ user.surname }}</h3>
+            </div>
         </div>
         {% endfor %}
     </div>

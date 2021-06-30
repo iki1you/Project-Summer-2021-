@@ -449,16 +449,6 @@ def friends():
 
     return render_template('friends.html', users=users, sess=db_sess)
 
-@login_required
-@app.route('/friends', methods=['GET', 'POST'])
-def friends():
-    db_sess = db_session.create_session()
-    user = db_sess.query(User).filter(User.username == current_user.username).first()
-    if not current_user.is_authenticated:
-        return redirect('/login')
-    return render_template('friends.html', user=user)
-
-
 
 if __name__ == '__main__':
     main()
