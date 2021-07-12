@@ -8,6 +8,7 @@ from forms.news import NewsForm
 from forms.user import LoginForm, RegisterForm, EditForm
 from data.users import User
 from data.friends import Friends
+from data.messages import Messages
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from forms.friend import FriendAddForm
 
@@ -448,6 +449,42 @@ def friends():
         users.append(db_sess.query(User).filter(User.id == i.friend_one).first())
 
     return render_template('friends.html', users=users, sess=db_sess)
+
+
+@app.route("/dialogs")
+def dialogs():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+
+    db_sess = db_session.create_session()
+
+    diags = []
+    for i in db_sess.query(Messages).filter((Messages.user_one == current_user.id) | (Messages.user_two == current_user.id)).all():
+        if i.user_one == current_user.id:
+            diags.append(db_sess.query(User).filter(User.id == i.friend_one).first())
+
+    return render_template('dialogs.html')
+
+
+@app.route('/dialog/<string:username>', methods=['GET', 'POST'])
+def dialog(username):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.username == username).first()
+    if user:
+
+        if current_user.is_authenticated:
+            news = db_sess.query(News).filter((News.user == current_user) | (News.is_private != True))
+        else:
+            news = db_sess.query(News).filter(News.is_private != True)
+
+
+        return render_template('profile.html', title='Профиль',
+                               news=news, user=user)
+    else:
+        abort(404)
+
+
+
 
 
 if __name__ == '__main__':
