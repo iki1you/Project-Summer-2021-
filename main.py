@@ -366,7 +366,7 @@ def friend_add():
         if user == current_user:
             return render_template('friend_add.html', message='Неверный никнейм', form=form)
 
-        if db_sess.query(Friends).filter(Friends.friend_two == user.id).first():
+        if db_sess.query(Friends).filter(Friends.friend_two == user.id and (Friends.status == 1)).first():
             return render_template('friend_add.html', message='Вы уже отправляли заявку пользователю', form=form)
 
         friend = Friends(
@@ -414,7 +414,7 @@ def friend_accepted(id):
 
     db_sess.add(friend)
     db_sess.commit()
-    return redirect('/friend_accept')
+    return redirect('/friends')
 
 
 @login_required
@@ -430,7 +430,7 @@ def friend_rejected(id):
 
     db_sess.add(friend)
     db_sess.commit()
-    return redirect('/friend_accept')
+    return redirect('/friends')
 
 
 @login_required
@@ -444,9 +444,9 @@ def friends():
     users = []
 
     for i in friends:
-        if db_sess.query(Friends).filter((Friends.friend_one == current_user.id) & (Friends.status != 1)).first():
-            continue
-        users.append(db_sess.query(User).filter(User.id == i.friend_one).first())
+        print(db_sess.query(Friends).filter((Friends.friend_one == current_user.id) & (Friends.status != 1)).first())
+        if db_sess.query(Friends).filter((Friends.friend_one == current_user.id) & (Friends.status == 1)).first():
+            users.append(db_sess.query(User).filter(User.id == i.friend_one).first())
 
     return render_template('friends.html', users=users, sess=db_sess)
 

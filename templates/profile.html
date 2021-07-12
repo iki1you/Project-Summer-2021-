@@ -11,8 +11,12 @@
 
 <div class="avatar">
 
-    <img src="{{url_for('static', filename='uploaded_images/')}}{{ user.avatar_id }}" width="90%" class="avatar_img">
+    <img src="{{url_for('static', filename='uploaded_images/')}}{{ user.avatar_id }}" width="90%" height="50%" class="avatar_img">
          <div class="edit_avatar">
+             <br>
+             <br>
+             <br><br>
+
              {% if current_user.is_authenticated and current_user.id == user.id %}
    <a href="/edit_avatar/{{user.username}}" class="btn btn-secondary">Изменить аватар</a>
     {% endif %}
@@ -35,6 +39,11 @@
 </div>
 
 <div class="friends">
+    {% for user in users%}
+            <a href="/profile/{{user.username}}"><img src="{{url_for('static', filename='uploaded_images/')}}{{ user.avatar_id }}"
+                                                      width="6%" height="3%" class="avatar_img round"></a>
+
+        {% endfor %}
 </div>
 
 <div class="main">
