@@ -4,7 +4,12 @@
 
 <div>
     {% for item in messages %}
-        <p>{{ item.user_one }} {{ item.message }}</p>
+        {% if item.user_one == current_user.id %}
+            <p>{{ current_user.name }} {{ item.message }}</p>
+        {% else %}
+            <p>{{ user.name }} {{ item.message }}</p>
+        {% endif %}
+
     {% endfor %}
 </div>
 

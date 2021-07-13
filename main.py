@@ -490,10 +490,9 @@ def dialog(username):
 
             db_sess.add(message)
             db_sess.commit()
-            print(1)
-            return render_template('dialog.html', form=form, user=user, messages=messages)
+            return redirect('')
 
-        return render_template('dialog.html', form=form, user=user, messages=messages)
+        return render_template('dialog.html', form=form, current_user=current_user, user=user, messages=messages)
 
     else:
         abort(404)
