@@ -4,6 +4,7 @@ from flask import Flask, url_for, request, render_template, json, redirect, make
 from werkzeug.utils import secure_filename
 from data import db_session
 from data.news import News
+from forms.message import MessageForm
 from forms.news import NewsForm
 from forms.user import LoginForm, RegisterForm, EditForm
 from data.users import User
@@ -444,7 +445,6 @@ def friends():
     users = []
 
     for i in friends:
-        print(db_sess.query(Friends).filter((Friends.friend_one == current_user.id) & (Friends.status != 1)).first())
         if db_sess.query(Friends).filter((Friends.friend_one == current_user.id) & (Friends.status == 1)).first():
             users.append(db_sess.query(User).filter(User.id == i.friend_one).first())
 
@@ -461,9 +461,13 @@ def dialogs():
     diags = []
     for i in db_sess.query(Messages).filter((Messages.user_one == current_user.id) | (Messages.user_two == current_user.id)).all():
         if i.user_one == current_user.id:
-            diags.append(db_sess.query(User).filter(User.id == i.friend_one).first())
+            if not db_sess.query(User).filter(User.id == i.user_two).first() in diags:
+                diags.append(db_sess.query(User).filter(User.id == i.user_two).first())
+        elif i.user_two == current_user.id:
+            if not db_sess.query(User).filter(User.id == i.user_one).first() in diags:
+                diags.append(db_sess.query(User).filter(User.id == i.user_one).first())
 
-    return render_template('dialogs.html')
+    return render_template('dialogs.html', diags=diags)
 
 
 @app.route('/dialog/<string:username>', methods=['GET', 'POST'])
@@ -471,20 +475,28 @@ def dialog(username):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.username == username).first()
     if user:
+        messages = db_sess.query(Messages).filter(
+            ((Messages.user_one == current_user.id) & (Messages.user_two == user.id)) |
+            ((Messages.user_one == user.id) & (Messages.user_two == current_user.id))).all()
 
-        if current_user.is_authenticated:
-            news = db_sess.query(News).filter((News.user == current_user) | (News.is_private != True))
-        else:
-            news = db_sess.query(News).filter(News.is_private != True)
+        form = MessageForm()
 
+        if form.validate_on_submit():
+            message = Messages(
+                user_one=current_user.id,
+                user_two=user.id,
+                message=form.message.data
+            )
 
-        return render_template('profile.html', title='Профиль',
-                               news=news, user=user)
+            db_sess.add(message)
+            db_sess.commit()
+            print(1)
+            return render_template('dialog.html', form=form, user=user, messages=messages)
+
+        return render_template('dialog.html', form=form, user=user, messages=messages)
+
     else:
         abort(404)
-
-
-
 
 
 if __name__ == '__main__':

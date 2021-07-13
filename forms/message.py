@@ -4,6 +4,6 @@ from wtforms import BooleanField, SubmitField
 from wtforms.validators import DataRequired
 
 
-class Message(FlaskForm):
+class MessageForm(FlaskForm):
     message = TextAreaField('', validators=[DataRequired()])
     submit = SubmitField('Отправить')

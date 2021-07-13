@@ -1,10 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+
+<div class="main">
+    {% for user in diags %}
+    <p>
+       {{ user.name }} {{ user.username }} <a href="/dialog/{{ user.username }}" class="btn btn-primary">Написать сообщение</a>
+    </p>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

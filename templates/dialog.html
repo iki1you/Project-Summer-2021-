@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+
+<div>
+    {% for item in messages %}
+        <p>{{ item.user_one }} {{ item.message }}</p>
+    {% endfor %}
+</div>
+
+<form action="" method="post">
+
+    {{ form.hidden_tag() }}
+
+    <p>{{ form.message.label }}<br>
+    {{ form.message(class="form-control") }}<br>
+    </p>
+
+    <p>{{ form.submit(type="submit", class="btn btn-success") }}</p>
+
+    </form>
+{% endblock %}
+
